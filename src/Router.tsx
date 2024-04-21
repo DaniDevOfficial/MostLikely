@@ -15,7 +15,7 @@ const router = createHashRouter([
         element: <HomePage />,
       },
       {
-        path: "room/:id",
+        path: "lobby/:id",
         element: <Lobby />,
       }
     ],

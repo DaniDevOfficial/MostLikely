@@ -1,4 +1,4 @@
-import {  Button, Flex, Heading, Input, useToast } from '@chakra-ui/react'
+import { Button, Flex, Heading, Input, useToast } from '@chakra-ui/react'
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { socket } from '../../configs/socket';
@@ -7,7 +7,6 @@ export function Landing() {
     const [name, setName] = useState("");
     const toast = useToast();
     const navigate = useNavigate();
-    console.log(socket)
 
     function joinRoom() {
         if (roomId === "") {
@@ -26,27 +25,48 @@ export function Landing() {
     }
 
     useEffect(() => {
-        socket.on("room does not exist", () => {
+        function handleRoomDoesNotExist() {
             setRoomId("");
             toast({
-                title: "This Room does not exist!",
+                title: "This Lobby does not exist!",
                 description: `Are you sure that that was the right code?`,
                 status: "error",
             });
-        });
-        socket.on("room exists", (data) => {
-            console.log(data)
+        };
+        function RoomCreated(data: string) {
             toast({
-                title: "Joined Room",
-                description: `You have joined the room ${data}`,
+                title: "Room Created",
+                description: `You have created the Lobby ${data}`,
                 status: "success",
             });
-            navigate(`/room/${data}`);
-        });
+            navigate(`/lobby/${data}`);
+        }
+
+        function handleRoomExists(data: string) {
+            toast({
+                title: "Joined Room",
+                description: `You have joined the Lobby ${data}`,
+                status: "success",
+            });
+            navigate(`/lobby/${data}`);
+        };
+        function test () {
+            console.log("wasd")
+        }
+        socket.on("create", test)
+        socket.on("room does not exist", handleRoomDoesNotExist);
+        socket.on("room exists", handleRoomExists);
+        socket.on("created", RoomCreated);
+        return () => {
+            socket.off("room does not exist", handleRoomDoesNotExist);
+            socket.off("room exists", handleRoomExists);
+            socket.off("created", RoomCreated);
+        };
     }, []);
+
     return (
         <>
-            <Heading>Hey There👋, Welcome to WhoWouldBeTheMostLikely </Heading>
+            <Heading>Hey There👋, Welcome to TopTraits </Heading>
 
             <Flex
                 flexDirection={{ base: "column", md: "row" }}
@@ -60,7 +80,7 @@ export function Landing() {
                 >
 
                     <Heading fontSize="larger">Join a game with a code</Heading>
-                    <Input placeholder="Enter a Room ID" required value={roomId} onChange={(e) => (setRoomId(e.target.value))} />
+                    <Input placeholder="Enter a lobby Code" required value={roomId} onChange={(e) => (setRoomId(e.target.value))} />
                     <Button type="submit" colorScheme="pink" onClick={joinRoom}>Click to join</Button>
 
                 </Flex>
