@@ -2,6 +2,7 @@ import { RouterProvider, createHashRouter } from "react-router-dom";
 
 import { HomePage } from "./pages/Home";
 import { DefaultLayout } from "./layouts/Default";
+import { Lobby } from "./pages/Lobby";
 
 
 const router = createHashRouter([
@@ -13,6 +14,10 @@ const router = createHashRouter([
         index: true, // same path as parent: "/"
         element: <HomePage />,
       },
+      {
+        path: "room/:id",
+        element: <Lobby />,
+      }
     ],
   },
 

@@ -1,11 +1,12 @@
-import { Button, Heading } from "@chakra-ui/react";
-
+import { Box } from "@chakra-ui/react";
+import { Landing } from "../components/Home/Landing";
 export function HomePage() {
 
     return (
         <>
-            <Heading>Hey There</Heading>
-            <Button colorScheme="pink">Click me</Button>
+            <Box textAlign={"center"} mt={10}>
+                <Landing />
+            </Box>
         </>
     )
 }
