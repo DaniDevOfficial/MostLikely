@@ -49,14 +49,13 @@ export function Landing() {
                 status: "success",
             });
             navigate(`/lobby/${data}`);
-        };
-        function test () {
-            console.log("wasd")
         }
-        socket.on("create", test)
+
+        socket.on("create", RoomCreated);
         socket.on("room does not exist", handleRoomDoesNotExist);
         socket.on("room exists", handleRoomExists);
         socket.on("created", RoomCreated);
+
         return () => {
             socket.off("room does not exist", handleRoomDoesNotExist);
             socket.off("room exists", handleRoomExists);
