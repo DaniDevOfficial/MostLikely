@@ -48,8 +48,9 @@ export function Game() {
             };
         });
 
-        socket.on("left", ({ room, users: usersInRoom }) => {
-            setConnectedUsers(usersInRoom);
+        socket.on("left", ({ roomInformation }) => {
+            console.log(roomInformation)
+            setAllUsers(roomInformation);
         });
 
         socket.on("joined", ({ room, users: usersInRoom }) => {
@@ -73,15 +74,14 @@ export function Game() {
 
     return (
         <>
-            <Button onClick={leave}>Leave this lobby</Button>
-            RoomID: {params.id}
+            <Button onClick={leave}>Leave this Lobby</Button>
             {userState === UserState.NameChose && (
                 <UserSelection setUsername={setUsername} setUserState={setUserState} setProfilePicture={setProfilePicture} />
             )}
             {userState === UserState.Waiting && (
                 <Lobby users={allUsers} />
             )}
-            {userState === UserState.InProgress && (
+            {userState === UserState.InProgress && ( 
                 <div>The game is in progress...</div>
             )}
             {userState === UserState.Ended && (
