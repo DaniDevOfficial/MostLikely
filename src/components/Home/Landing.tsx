@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { socket } from '../../configs/socket';
 export function Landing() {
     const [roomId, setRoomId] = useState("");
-    const [name, setName] = useState("");
     const toast = useToast();
     const navigate = useNavigate();
 
@@ -18,10 +17,8 @@ export function Landing() {
     }
 
     function createRoom() {
-        if (name === "") {
-            return;
-        }
-        socket.emit("create", name);
+
+        socket.emit("create");
     }
 
     useEffect(() => {
@@ -89,7 +86,6 @@ export function Landing() {
                     gap={4}
                 >
                     <Heading fontSize="larger">Or create your own lobby</Heading>
-                    <Input placeholder="Enter a Username" required value={name} onChange={(e) => (setName(e.target.value))} />
                     <Button type="submit" colorScheme="pink" onClick={createRoom}>Create a new room</Button>
                 </Flex>
             </Flex>

@@ -2,7 +2,7 @@ import { RouterProvider, createHashRouter } from "react-router-dom";
 
 import { HomePage } from "./pages/Home";
 import { DefaultLayout } from "./layouts/Default";
-import { Lobby } from "./pages/Lobby";
+import { Game } from "./pages/Game";
 
 
 const router = createHashRouter([
@@ -16,7 +16,7 @@ const router = createHashRouter([
       },
       {
         path: "lobby/:id",
-        element: <Lobby />,
+        element: <Game />,
       }
     ],
   },
