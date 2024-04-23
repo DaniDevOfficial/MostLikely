@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Text, UnorderedList, ListItem, Image, Flex, useToast, Heading, chakra } from '@chakra-ui/react';
+import { Box, Text, UnorderedList, ListItem, Image, Flex, useToast, Heading, chakra, Input, Button } from '@chakra-ui/react';
 import { useLocation, useParams } from 'react-router-dom';
 import { GameSettings, Player, Room } from '../../types/Rooms';
 import { socket } from '../../configs/socket';
+import { ChangeSettingsPopover } from '../ChangeSettingPopover';
 
 
 interface Props {
@@ -13,13 +14,15 @@ export function Lobby({ roomInformation }: Props) {
     const [players, setPlayers] = useState<Player[]>([]);
     const [settings, setSettings] = useState<GameSettings>([]);
     const [thisPlayer, setThisPlayer] = useState<Player>([]);
-
+    const params = useParams();
+    const currentUrl = window.location.href;
+    const toast = useToast();
     const tmpUser = {
         name: "User",
         profilePicture: "https://via.placeholder.com/50",
         role: "host",
         playerId: "12345"
-    
+
     }
 
 
@@ -27,7 +30,7 @@ export function Lobby({ roomInformation }: Props) {
         if (roomInformation && roomInformation.players) {
             if (roomInformation.players.length > 0) {
                 const tmp: Player[] = roomInformation.players;
-                tmp[0].role = "host"; 
+                tmp[0].role = "host";
                 setPlayers(tmp);
             } else {
                 setPlayers([tmpUser]);
@@ -42,10 +45,14 @@ export function Lobby({ roomInformation }: Props) {
         }
     }, [roomInformation]);
 
+    function changeSingleSetting(setting: string, value: number) {
+        const newSettings = settings;
+        newSettings[setting] = value;
+        console.log(newSettings)
+        console.log(params.id)
+        socket.emit("settings update", { newSettings: newSettings, roomId: params.id });
+    }
 
-    const currentUrl = window.location.href;
-    const params = useParams();
-    const toast = useToast();
     function copyToClipboard(thingToCopy: string | number, description: string) {
         navigator.clipboard.writeText(thingToCopy.toString()); // Convert thingToCopy to string
         toast({
@@ -89,7 +96,7 @@ export function Lobby({ roomInformation }: Props) {
                 mt={10}
             >
                 <Box
-                    w={{ base: "90%", md: "400px" }}
+                    w={{ base: "90%", md: "450px" }}
                     bg={"gray.100"}
                     px={10}
                     py={5}
@@ -100,10 +107,10 @@ export function Lobby({ roomInformation }: Props) {
 
                 >
                     <Text fontSize="2xl" fontWeight="bold" my={5}>Game settings</Text>
-                    <Text my={3}>Time For Writing Questions: <chakra.a fontWeight={"bold"}>{settings.QuestionWriteTime} Seconds</chakra.a></Text>
-                    {thisPlayer?.role === "host" && <Text my={3}>You are the host</Text>}
-                    <Text my={3}>Vote time: <chakra.a fontWeight={"bold"}>{settings.VoteTime} Seconds</chakra.a></Text>
-                    <Text my={3}>Amount of Questions Per Player: <chakra.a fontWeight={"bold"}>{settings.AmountOfQuestionsPerPlayer}</chakra.a> </Text>
+                    <Text fontSize={"x-small"}> Only the Lobby host can change the Settings</Text>
+                    <Text my={3}>Time For Writing Questions: <chakra.a fontWeight={"bold"}>{settings.QuestionWriteTime} Seconds</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"QuestionWriteTime"} onUpadate={changeSingleSetting} description={"the Time for Writing Questions (in seconds)"} />      </chakra.a>} </Text>
+                    <Text my={3}>Vote time: <chakra.a fontWeight={"bold"}>{settings.VoteTime} Seconds</chakra.a>  {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"VoteTime"} onUpadate={changeSingleSetting} description={"the Time for Voting (in seconds)"} />      </chakra.a>} </Text>
+                    <Text my={3}>Amount of Questions Per Player: <chakra.a fontWeight={"bold"}>{settings.AmountOfQuestionsPerPlayer}</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"AmountOfQuestionsPerPlayer"} onUpadate={changeSingleSetting} description={"the Amount of Questions a User can Write (recomended to be a max of 5)"} />      </chakra.a>}   </Text>
                 </Box>
                 <Flex
                     gap={50}

@@ -64,6 +64,10 @@ export function Game() {
 
         socket.on("room exists", () => {
         });
+        socket.on("room information updated", (roomInformation) => {
+            console.log(roomInformation);
+            setRoomInformation(roomInformation);
+        });
 
         socket.on('user selected', (roomInformation) => {
 
@@ -85,7 +89,7 @@ export function Game() {
             {userState === UserState.Waiting && (
                 <Lobby roomInformation={roomInformation} />
             )}
-            {userState === UserState.InProgress && ( 
+            {userState === UserState.InProgress && (
                 <div>The game is in progress...</div>
             )}
             {userState === UserState.Ended && (
