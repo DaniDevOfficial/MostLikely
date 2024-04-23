@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Text, UnorderedList, ListItem, Image, Flex, useToast } from '@chakra-ui/react';
 import { useLocation, useParams } from 'react-router-dom';
+import { Player, Room } from '../../types/Rooms';
 
-export function Lobby({ users }) {
+
+interface Props {
+    roomInformation: Room;
+}
+
+export function Lobby({ roomInformation }: Props) {
+    const [players, setPlayers] = useState<Player[]>([]);
+
+    useEffect(() => {
+        if (roomInformation && roomInformation.players) {
+            const tmp: Player[] = roomInformation.players;
+            setPlayers(tmp); 
+        }
+    }, [roomInformation]);
+
 
     const currentUrl = window.location.href;
     const params = useParams();
     const toast = useToast();
-    function copyToClipboard(thingToCopy, description) {
-        navigator.clipboard.writeText(currentUrl);
+    function copyToClipboard(thingToCopy: string | number, description: string) {
+        navigator.clipboard.writeText(thingToCopy.toString()); // Convert thingToCopy to string
         toast({
             title: "Copied " + description + " to clipboard",
             status: "success",
@@ -17,6 +32,7 @@ export function Lobby({ users }) {
         });
     }
 
+    console.log(players);
     return (
         <>
             <Box textAlign="center">
@@ -49,7 +65,7 @@ export function Lobby({ users }) {
                 flexWrap={"wrap"}
                 justifyContent={"center"}
             >
-                {users.map((user) => (
+                {players.map((user) => (
                     <>
                         <Flex
                             flexDir={"column"}
@@ -71,3 +87,4 @@ export function Lobby({ users }) {
         </>
     );
 }
+

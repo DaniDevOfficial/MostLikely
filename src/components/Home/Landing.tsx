@@ -9,8 +9,7 @@ export function Landing() {
 
     function joinRoom() {
         if (roomId === "") {
-
-            return;
+            return
         }
         socket.emit("check if room exists", roomId);
 
@@ -29,7 +28,7 @@ export function Landing() {
                 description: `Are you sure that that was the right code?`,
                 status: "error",
             });
-        };
+        }
         function RoomCreated(data: string) {
             toast({
                 title: "Room Created",
@@ -58,6 +57,7 @@ export function Landing() {
             socket.off("room exists", handleRoomExists);
             socket.off("created", RoomCreated);
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

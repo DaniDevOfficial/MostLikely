@@ -5,6 +5,7 @@ import { Button } from "@chakra-ui/react";
 import { UserSelection } from "../components/Game/UserSelection";
 import { Lobby } from "../components/Game/Lobby";
 import { set } from "firebase/database";
+import { Room } from "../types/Rooms";
 enum UserState {
     NameChose = "nameChose",
     Waiting = "waiting",
@@ -19,6 +20,8 @@ enum GameState {
     Ended = "ended"
 }
 
+
+
 export function Game() {
     const params = useParams();
     const navigate = useNavigate();
@@ -26,6 +29,7 @@ export function Game() {
     const [profilePicture, setProfilePicture] = useState("");
     const [connectedUsers, setConnectedUsers] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
+    const [roomInformation, setRoomInformation] = useState<Room>({});
     const [userState, setUserState] = useState(UserState.NameChose);
     function leave() {
         socket.emit("leave", params.id);
@@ -50,7 +54,7 @@ export function Game() {
 
         socket.on("left", ({ roomInformation }) => {
             console.log(roomInformation)
-            setAllUsers(roomInformation);
+            setRoomInformation(roomInformation);
         });
 
         socket.on("joined", ({ room, users: usersInRoom }) => {
@@ -61,10 +65,10 @@ export function Game() {
         socket.on("room exists", () => {
         });
 
-        socket.on('user selected', (users) => {
+        socket.on('user selected', (roomInformation) => {
 
-            console.log(users);
-            setAllUsers(users);
+            console.log(roomInformation);
+            setRoomInformation(roomInformation);
         });
 
         return () => {
@@ -79,7 +83,7 @@ export function Game() {
                 <UserSelection setUsername={setUsername} setUserState={setUserState} setProfilePicture={setProfilePicture} />
             )}
             {userState === UserState.Waiting && (
-                <Lobby users={allUsers} />
+                <Lobby roomInformation={roomInformation} />
             )}
             {userState === UserState.InProgress && ( 
                 <div>The game is in progress...</div>
