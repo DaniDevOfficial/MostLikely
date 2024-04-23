@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Text, UnorderedList, ListItem, Image, Flex, useToast } from '@chakra-ui/react';
+import { Box, Text, UnorderedList, ListItem, Image, Flex, useToast, Heading, chakra } from '@chakra-ui/react';
 import { useLocation, useParams } from 'react-router-dom';
-import { Player, Room } from '../../types/Rooms';
+import { GameSettings, Player, Room } from '../../types/Rooms';
+import { socket } from '../../configs/socket';
 
 
 interface Props {
@@ -10,11 +11,34 @@ interface Props {
 
 export function Lobby({ roomInformation }: Props) {
     const [players, setPlayers] = useState<Player[]>([]);
+    const [settings, setSettings] = useState<GameSettings>([]);
+    const [thisPlayer, setThisPlayer] = useState<Player>([]);
+
+    const tmpUser = {
+        name: "User",
+        profilePicture: "https://via.placeholder.com/50",
+        role: "host",
+        playerId: "12345"
+    
+    }
+
 
     useEffect(() => {
         if (roomInformation && roomInformation.players) {
-            const tmp: Player[] = roomInformation.players;
-            setPlayers(tmp); 
+            if (roomInformation.players.length > 0) {
+                const tmp: Player[] = roomInformation.players;
+                tmp[0].role = "host"; 
+                setPlayers(tmp);
+            } else {
+                setPlayers([tmpUser]);
+            }
+        }
+        if (roomInformation && roomInformation.game && roomInformation.game.settings) {
+            setSettings(roomInformation.game.settings);
+        }
+        if (roomInformation && roomInformation.players) {
+            console.log(socket.id)
+            setThisPlayer(roomInformation.players.find((player) => player.playerId === socket.id));
         }
     }, [roomInformation]);
 
@@ -31,8 +55,6 @@ export function Lobby({ roomInformation }: Props) {
             isClosable: true,
         });
     }
-
-    console.log(players);
     return (
         <>
             <Box textAlign="center">
@@ -60,29 +82,62 @@ export function Lobby({ roomInformation }: Props) {
                 </Box>
             </Box>
             <Flex
-                gap={"100px"}
+                flexDir={{ base: "column", md: "row-reverse" }}
+                justifyContent={{ base: "center", md: "space-between" }}
+                alignItems={{ base: "center", md: "flex-start" }}
+                gap={10}
                 mt={10}
-                flexWrap={"wrap"}
-                justifyContent={"center"}
             >
-                {players.map((user) => (
-                    <>
+                <Box
+                    w={{ base: "90%", md: "400px" }}
+                    bg={"gray.100"}
+                    px={10}
+                    py={5}
+                    display={"flex"}
+                    flexDir={"column"}
+                    borderRadius={"20px"}
+                    alignItems={{ base: "center", md: "baseline" }}
+
+                >
+                    <Text fontSize="2xl" fontWeight="bold" my={5}>Game settings</Text>
+                    <Text my={3}>Time For Writing Questions: <chakra.a fontWeight={"bold"}>{settings.QuestionWriteTime} Seconds</chakra.a></Text>
+                    {thisPlayer?.role === "host" && <Text my={3}>You are the host</Text>}
+                    <Text my={3}>Vote time: <chakra.a fontWeight={"bold"}>{settings.VoteTime} Seconds</chakra.a></Text>
+                    <Text my={3}>Amount of Questions Per Player: <chakra.a fontWeight={"bold"}>{settings.AmountOfQuestionsPerPlayer}</chakra.a> </Text>
+                </Box>
+                <Flex
+                    gap={50}
+                    flexWrap={"wrap"}
+                    justifyContent={"center"}
+                >
+                    {players.map((player) => (
                         <Flex
+                            key={player.playerId}
                             flexDir={"column"}
-                            justifyContent={"center"}
                             alignItems={"center"}
                         >
                             <Image
                                 borderRadius={"full"}
                                 boxSize={"100px"}
-                                src={user.profilePicture}
-                                alt={user.name}
+                                src={player.profilePicture}
+                                alt={player.name}
                                 fallbackSrc="https://via.placeholder.com/50"
                             />
-                            <Text>{user.name}</Text>
+                            <Text textAlign={"center"}>{player.name}</Text>
+                            {player.role &&
+                                <Text
+                                    bg={"gray.200"}
+                                    p={1}
+                                    px={3}
+                                    fontSize={"sm"}
+                                    borderRadius={"100px"}
+                                >
+                                    {player.role}
+                                </Text>
+                            }
                         </Flex>
-                    </>
-                ))}
+                    ))}
+                </Flex>
             </Flex>
         </>
     );

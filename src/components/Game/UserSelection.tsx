@@ -4,7 +4,36 @@ import { socket } from '../../configs/socket';
 import { useParams } from 'react-router-dom';
 
 export function UserSelection({ setUsername, setProfilePicture, setUserState }) {
-    const [name, setName] = React.useState("David");
+    const names = [
+        "David", 
+        "Dave", 
+        "Delfin 🐬", 
+        "Sondong", 
+        "LaBebe 🦧🦧", 
+        "Bingus", 
+        "Léonat", 
+        "Spoingus", 
+        "Abbash getter", 
+        "Oatmeal", 
+        "Sir Laveen Silverdragon Gamadon III", 
+        "Wise Car", 
+        "Delvin Ze Dong", 
+        "Herbert", 
+        "David Bischgauvsethi", 
+        "Big Floppa", 
+        "Léooo van Goof", 
+        "Megatron", 
+        "Lucas Fentaly Heisenberg", 
+        "Kevin", 
+        "Justin Caliou 👨‍🦲", 
+        "Divad Hoffgetter", 
+        "Security Car", 
+        "Sanjana Paramanantharajas Katamarana", 
+        "Veteran Car", 
+        "Sad Hampter", 
+      ];
+          
+    const [name, setName] = React.useState(names[Math.floor(Math.random() * names.length)]);
     const [tmpProfilePicture, setTmpProfilePicture] = React.useState("None");
     const params = useParams();
     const room = params.id;
@@ -40,6 +69,7 @@ export function UserSelection({ setUsername, setProfilePicture, setUserState }) 
             <Heading>Choose your name</Heading>
             <Input
                 onChange={(e) => setName(e.target.value)}
+                maxLength={15}
                 value={name}
                 placeholder="Name" />
 

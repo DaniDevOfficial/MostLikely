@@ -1,22 +1,24 @@
 export interface Room {
     [roomId: string]: {
-        game: {
-            settings: {
-                QuestionWriteTime: number;
-                VoteTime: number;
-                AmountOfQuestionsPerPlayer: number;
-            };
-            state: string;
-        };
-        players: Player[]; 
-        questions: Question[]; 
+        game: Game;
+        players: Player[];
+        questions: Question[];
     };
 }
-
+export interface Game {
+    settings: GameSettings;
+    state: string;
+}
+export interface GameSettings {
+    QuestionWriteTime: number;
+    VoteTime: number;
+    AmountOfQuestionsPerPlayer: number;
+}
 export interface Player {
-    name: string;
-    profilePicture: string;
-    id: string;
+    name?: string;
+    profilePicture?: string;
+    role?: string;
+    playerId?: string;
 }
 
 export interface Question {
