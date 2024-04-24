@@ -2,21 +2,27 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../configs/socket";
 import { Button } from "@chakra-ui/react";
+import { Room } from "../types/Rooms";
 import { UserSelection } from "../components/Game/UserSelection";
 import { Lobby } from "../components/Game/Lobby";
-import { set } from "firebase/database";
-import { Room } from "../types/Rooms";
+import { QuestionWritingPhase } from "../components/Game/QuestionWritingPhase";
+
 enum UserState {
     NameChose = "nameChose",
     Waiting = "waiting",
-    InProgress = "inProgress",
+    QuestionWriteTime = "questionWriteTime",
+    QuestionWriteDone = "questionWriteDone",
+    QuestionVoteTime = "questionVoteTime",
+    QuestionVoteDone = "questionVoteDone",
+
     Ended = "ended"
 }
 
 enum GameState {
-    NameChose = "nameChose",
     Waiting = "waiting",
     InProgress = "inProgress",
+    QuestionWriteTime = "questionWriteTime",
+    QuestionVoteTime = "questionVoteTime",
     Ended = "ended"
 }
 
@@ -31,11 +37,15 @@ export function Game() {
     const [allUsers, setAllUsers] = useState([]);
     const [roomInformation, setRoomInformation] = useState<Room>({});
     const [userState, setUserState] = useState(UserState.NameChose);
+    const [gameState, setGameState] = useState(GameState.Waiting);
     function leave() {
         socket.emit("leave", params.id);
         navigate(`/`);
     }
 
+    useEffect(() => {
+        setGameState(roomInformation.game?.state);
+    }, [roomInformation]);
     useEffect(() => {
         socket.emit("check if room exists", params.id);
         socket.emit("join", params.id)
@@ -69,6 +79,10 @@ export function Game() {
             setRoomInformation(roomInformation);
         });
 
+        socket.on("game started", (roomInformation) => {
+            setRoomInformation(roomInformation);
+        });
+
         socket.on('user selected', (roomInformation) => {
 
             console.log(roomInformation);
@@ -80,21 +94,24 @@ export function Game() {
         };
     }, []);
 
-    return (
-        <>
-            <Button onClick={leave}>Leave this Lobby</Button>
-            {userState === UserState.NameChose && (
-                <UserSelection setUsername={setUsername} setUserState={setUserState} setProfilePicture={setProfilePicture} />
-            )}
-            {userState === UserState.Waiting && (
-                <Lobby roomInformation={roomInformation} />
-            )}
-            {userState === UserState.InProgress && (
-                <div>The game is in progress...</div>
-            )}
-            {userState === UserState.Ended && (
-                <div>The game has ended.</div>
-            )}
-        </>
-    )
+
+
+
+    let componentToRender;
+
+    if (userState === UserState.NameChose) {
+        componentToRender = <UserSelection setUsername={setUsername} setUserState={setUserState} setProfilePicture={setProfilePicture} />;
+    } else if (gameState === GameState.Waiting) {
+        componentToRender = <Lobby roomInformation={roomInformation} />;
+    } else if (gameState === GameState.QuestionWriteTime) {
+        componentToRender = <QuestionWritingPhase roomInformation={roomInformation} userState={userState} setUserState={setUserState} gameState={gameState} />;
+    } else if (userState === UserState.Ended) {
+        componentToRender = <div>The game has ended.</div>;
+    }
+
+    return (<>
+        <Button onClick={leave}>Leave this Lobby</Button>
+        {componentToRender}
+    </>
+    );
 }

@@ -24,7 +24,7 @@ export interface Player {
 export interface Question {
     question: string;
     author: string;
-    votes: Vote[];
+    votes?: Vote[];
 }
 
 export interface Vote {

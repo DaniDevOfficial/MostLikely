@@ -45,6 +45,11 @@ export function Lobby({ roomInformation }: Props) {
         }
     }, [roomInformation]);
 
+
+    function startGame() {
+        socket.emit("start game", params.id);
+    }
+
     function changeSingleSetting(setting: string, value: number) {
         const newSettings = settings;
         newSettings[setting] = value;
@@ -95,22 +100,26 @@ export function Lobby({ roomInformation }: Props) {
                 gap={10}
                 mt={10}
             >
-                <Box
-                    w={{ base: "90%", md: "450px" }}
-                    bg={"gray.100"}
-                    px={10}
-                    py={5}
-                    display={"flex"}
-                    flexDir={"column"}
-                    borderRadius={"20px"}
-                    alignItems={{ base: "center", md: "baseline" }}
+                <Box>
 
-                >
-                    <Text fontSize="2xl" fontWeight="bold" my={5}>Game settings</Text>
-                    <Text fontSize={"x-small"}> Only the Lobby host can change the Settings</Text>
-                    <Text my={3}>Time For Writing Questions: <chakra.a fontWeight={"bold"}>{settings.QuestionWriteTime} Seconds</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"QuestionWriteTime"} onUpadate={changeSingleSetting} description={"the Time for Writing Questions (in seconds)"} />      </chakra.a>} </Text>
-                    <Text my={3}>Vote time: <chakra.a fontWeight={"bold"}>{settings.VoteTime} Seconds</chakra.a>  {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"VoteTime"} onUpadate={changeSingleSetting} description={"the Time for Voting (in seconds)"} />      </chakra.a>} </Text>
-                    <Text my={3}>Amount of Questions Per Player: <chakra.a fontWeight={"bold"}>{settings.AmountOfQuestionsPerPlayer}</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"AmountOfQuestionsPerPlayer"} onUpadate={changeSingleSetting} description={"the Amount of Questions a User can Write (recomended to be a max of 5)"} />      </chakra.a>}   </Text>
+                    <Box
+                        w={{ base: "90%", md: "450px" }}
+                        bg={"gray.100"}
+                        px={10}
+                        py={5}
+                        display={"flex"}
+                        flexDir={"column"}
+                        borderRadius={"20px"}
+                        alignItems={{ base: "center", md: "baseline" }}
+
+                    >
+                        <Text fontSize="2xl" fontWeight="bold" my={5}>Game settings</Text>
+                        <Text fontSize={"x-small"}> Only the Lobby host can change the Settings</Text>
+                        <Text my={3}>Time For Writing Questions: <chakra.a fontWeight={"bold"}>{settings.QuestionWriteTime} Seconds</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"QuestionWriteTime"} onUpadate={changeSingleSetting} description={"the Time for Writing Questions (in seconds)"} />      </chakra.a>} </Text>
+                        <Text my={3}>Vote time: <chakra.a fontWeight={"bold"}>{settings.VoteTime} Seconds</chakra.a>  {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"VoteTime"} onUpadate={changeSingleSetting} description={"the Time for Voting (in seconds)"} />      </chakra.a>} </Text>
+                        <Text my={3}>Amount of Questions Per Player: <chakra.a fontWeight={"bold"}>{settings.AmountOfQuestionsPerPlayer}</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"AmountOfQuestionsPerPlayer"} onUpadate={changeSingleSetting} description={"the Amount of Questions a User can Write (recomended to be a max of 5)"} />      </chakra.a>}   </Text>
+                    </Box>
+                    <Button colorScheme='pink' mt={5} w={"100%"} onClick={startGame}>Start game when everyone is ready</Button>
                 </Box>
                 <Flex
                     gap={50}
