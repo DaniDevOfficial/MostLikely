@@ -1,6 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Flex, Heading, Text, Button, Input } from '@chakra-ui/react'; // Import Chakra UI components or replace them with your UI library
+import { useState, useEffect } from 'react';
+import { Flex, Heading, Text, Button, Input, Icon, useToast } from '@chakra-ui/react'; // Import Chakra UI components or replace them with your UI library
 import { Room, Question } from '../../types/Rooms';
+import randomQuestions from '../../data/random_questions.json'
+import { FaRandom } from "react-icons/fa";
+import { socket } from '../../configs/socket';
+import { useParams } from 'react-router-dom';
 
 interface Props {
     roomInformation: Room;
@@ -9,11 +13,13 @@ interface Props {
     gameState: string;
 }
 
-export function QuestionWritingPhase({ roomInformation, userState, setUserState, gameState }: Props) {
+export function QuestionWritingPhase({ roomInformation, userState, setUserState }: Props) {
     const [timeLeft, setTimeLeft] = useState(roomInformation.game?.settings.QuestionWriteTime || 0);
     const amountOfQuestions = roomInformation.game?.settings.AmountOfQuestionsPerPlayer;
     const [questions, setQuestions] = useState<Question[]>([]);
-
+    const amoutOfPlayers = roomInformation.players.length || 0;
+    const amountFinishedWriting = (roomInformation.finishedWritingQuestions && roomInformation.finishedWritingQuestions.length) || 0;
+    const toast = useToast
     useEffect(() => {
         setUserState("questionWriteTime");
     }, []);
@@ -37,50 +43,92 @@ export function QuestionWritingPhase({ roomInformation, userState, setUserState,
         setQuestions(updatedQuestions);
     };
 
+    function generateRandomQuestion(): string {
+        // Define an array of random question options
+        // Generate a random index
+        const randomIndex = Math.floor(Math.random() * randomQuestions.length);
+
+        // Return the randomly selected question
+        return randomQuestions[randomIndex];
+    }
+    function handleRandomQuestion(index: number) {
+        // Generate a random question
+        const randomQuestion = generateRandomQuestion();
+
+        // Update the specified question with the random question
+        const updatedQuestions = [...questions];
+        updatedQuestions[index] = {
+            ...updatedQuestions[index],
+            question: randomQuestion
+        };
+        setQuestions(updatedQuestions);
+    }
     function renderInputFields() {
         const inputFields = [];
         for (let i = 0; i < amountOfQuestions; i++) {
             inputFields.push(
-                <Input
-                    my={3}
-                    key={i}
-                    placeholder={`Question ${i + 1}`}
-                    value={questions[i]?.question || ''}
-                    onChange={e => handleQuestionChange(i, e.target.value)}
-                />
+                <Flex
+                    alignItems="center"
+                    justifyContent="center"
+                    textAlign="center"
+                    gap={2}
+                    key={i}>
+                    <Input
+                        my={3}
+                        w={{ base: "80vw", md: "40vw" }}
+                        placeholder={`Question ${i + 1}`}
+                        value={questions[i]?.question || ''}
+                        onChange={e => handleQuestionChange(i, e.target.value)}
+                    />
+                    <Icon
+                        _hover={{
+                            transform: "scale(1.1)"
+                        }}
+                        cursor={"pointer"}
+                        transition={"transform 0.2s ease-in-out"}
+                        as={FaRandom}
+                        onClick={() => handleRandomQuestion(i)} />
+
+                </Flex>
             );
         }
         return inputFields;
-    };
+    }
     function finishedWritingQuestions() {
-        const isEmpty = questions.some(question => !question.question.trim());
-        if (!isEmpty) {
-            console.log("All questions have something written in them:", questions);
+        const removedEmptyQuestions = questions.filter(question => question.question !== "");
+        const isFull = removedEmptyQuestions.length == amountOfQuestions;
+        if (isFull) {
             setUserState("questionWriteDone");
-        } else {
-            // Handle the case where some questions are empty
-            alert("Please fill in all questions before proceeding.");
+            const questionsWithAuthor = removedEmptyQuestions.map(question => ({ ...question, author: socket.id }));
+            socket.emit("player finished writing", { questions: questionsWithAuthor, roomId: roomInformation.roomId });
         }
     }
+
     return (
         <Flex direction="column" alignItems="center" justifyContent="center" textAlign="center">
             <Heading>Question Writing Phase</Heading>
             <Text>
                 Now you have to write questions for the next game step. The questions should be answerable with a name.
-                Eg. Who is the most likely to eat grass?
+                E.g. Who is the most likely to eat grass?
             </Text>
             <Text fontWeight="bold">
-                You still have {timeLeft} Second{timeLeft === 1 ? '' : 's'} left 
+                You still have {timeLeft} Second{timeLeft === 1 ? '' : 's'} left
             </Text>
-            <Text fontSize={"sm"} my={2}>The time remaining might be false when you joined late or tabbed out</Text>
+            <Text>  {amountFinishedWriting}/{amoutOfPlayers} Players are finished With Writing </Text>
+            <Text fontSize={"sm"} my={2} mb={5}>The time remaining might be false when you joined late or tabbed out</Text>
             {userState === "questionWriteTime" && (
-                <div>
-
+                <>
                     {renderInputFields()}
-                </div>
+                    <Button colorScheme='pink' onClick={finishedWritingQuestions}>I'm Done</Button>
+                </>
             )}
-            {userState}
-            <Button onClick={finishedWritingQuestions}>I'm Done</Button>
+            {userState === "questionWriteDone" && (
+                <>
+                    <Text>Great, you have written all your questions!</Text>
+                    <Text>Now wait for the other players to finish or until the timer runs out.</Text>
+                </>
+            )}
+
             <Button onClick={() => setUserState("questionWriteTime")}>Go Back</Button>
         </Flex>
     );

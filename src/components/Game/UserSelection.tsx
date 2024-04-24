@@ -52,8 +52,6 @@ export function UserSelection({ setUsername, setProfilePicture, setUserState }) 
         "https://i.ytimg.com/vi/XJFFgc9jZz0/maxresdefault.jpg?sqp=-oaymwEmCIAKENAF8quKqQMa8AEB-AH-CYAC0AWKAgwIABABGGUgXyhUMA8=&rs=AOn4CLAYiRv4uZstkTjZaNsEdOwbsP6LAA",
         "https://media.licdn.com/dms/image/D4D03AQGt8kXSUqmhBg/profile-displayphoto-shrink_800_800/0/1693219459486?e=2147483647&v=beta&t=kxpWDcTBCz-I9cqbe6yX9QMCQtZNAVqJu8lf3zFh__8"
     ]
-    console.log("names length " + names.length)
-    console.log("profilePictures length " + fallbackImages.length)
     function handleUserSelection() {
         if (name === "") {
             return;

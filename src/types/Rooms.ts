@@ -1,8 +1,10 @@
 export interface Room {
     [roomId: string]: {
+        roomId: string;
         game: Game;
         players: Player[];
         questions: Question[];
+        finishedWritingQuestions: string[];
     };
 }
 export interface Game {

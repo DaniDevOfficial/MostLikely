@@ -103,7 +103,7 @@ export function Lobby({ roomInformation }: Props) {
                 <Box>
 
                     <Box
-                        w={{ base: "90%", md: "450px" }}
+                        w={{ base: "100%", md: "450px" }}
                         bg={"gray.100"}
                         px={10}
                         py={5}
@@ -119,7 +119,7 @@ export function Lobby({ roomInformation }: Props) {
                         <Text my={3}>Vote time: <chakra.a fontWeight={"bold"}>{settings.VoteTime} Seconds</chakra.a>  {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"VoteTime"} onUpadate={changeSingleSetting} description={"the Time for Voting (in seconds)"} />      </chakra.a>} </Text>
                         <Text my={3}>Amount of Questions Per Player: <chakra.a fontWeight={"bold"}>{settings.AmountOfQuestionsPerPlayer}</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"AmountOfQuestionsPerPlayer"} onUpadate={changeSingleSetting} description={"the Amount of Questions a User can Write (recomended to be a max of 5)"} />      </chakra.a>}   </Text>
                     </Box>
-                    <Button colorScheme='pink' mt={5} w={"100%"} onClick={startGame}>Start game when everyone is ready</Button>
+                    {thisPlayer.role === "host" && <Button colorScheme='pink' mt={5}  w="100%" onClick={startGame}>Start game when everyone is ready</Button>}
                 </Box>
                 <Flex
                     gap={50}
