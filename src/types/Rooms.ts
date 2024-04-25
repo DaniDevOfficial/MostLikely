@@ -5,6 +5,10 @@ export interface Room {
         players: Player[];
         questions: Question[];
         finishedWritingQuestions: string[];
+        voting: [
+            currentVoteId: string,
+            currentVoteStatus: string
+        ]
     };
 }
 export interface Game {
@@ -24,6 +28,7 @@ export interface Player {
 }
 
 export interface Question {
+    id: string;
     question: string;
     author: string;
     votes?: Vote[];

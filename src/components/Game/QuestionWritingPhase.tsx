@@ -105,20 +105,18 @@ export function QuestionWritingPhase({ roomInformation, userState, setUserState 
             socket.emit("player finished writing", { questions: questionsWithAuthor, roomId: roomInformation.roomId });
         }
     }
-    
+
     useEffect(() => {
         const removedEmptyQuestions = questions.filter(question => question.question !== "");
         const questionsWithAuthorTmp = removedEmptyQuestions.map(question => ({ ...question, author: socket.id }));
         setQuestionsWithAuthor(questionsWithAuthorTmp);
 
-        // Listen for the 'finish writing questions' event and emit 'player finished writing' when triggered
         socket.on("finish writing questions", () => {
             console.log("questions With Author", questionsWithAuthorTmp);
             socket.emit("player finished writing", { questions: questionsWithAuthorTmp, roomId: roomInformation.roomId });
         });
 
         return () => {
-            // Cleanup socket listener
             socket.off("finish writing questions");
         };
     }, [questions, socket]);
