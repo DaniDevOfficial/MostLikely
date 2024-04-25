@@ -17,6 +17,7 @@ export function QuestionWritingPhase({ roomInformation, userState, setUserState 
     const [timeLeft, setTimeLeft] = useState(roomInformation.game?.settings.QuestionWriteTime || 0);
     const amountOfQuestions = roomInformation.game?.settings.AmountOfQuestionsPerPlayer;
     const [questions, setQuestions] = useState<Question[]>([]);
+    const [questionsWithAuthor, setQuestionsWithAuthor] = useState<Question[]>([]);
     const amoutOfPlayers = roomInformation.players.length || 0;
     const amountFinishedWriting = (roomInformation.finishedWritingQuestions && roomInformation.finishedWritingQuestions.length) || 0;
     const toast = useToast
@@ -96,6 +97,7 @@ export function QuestionWritingPhase({ roomInformation, userState, setUserState 
     }
     function finishedWritingQuestions() {
         const removedEmptyQuestions = questions.filter(question => question.question !== "");
+        console.log(removedEmptyQuestions)
         const isFull = removedEmptyQuestions.length == amountOfQuestions;
         if (isFull) {
             setUserState("questionWriteDone");
@@ -103,6 +105,24 @@ export function QuestionWritingPhase({ roomInformation, userState, setUserState 
             socket.emit("player finished writing", { questions: questionsWithAuthor, roomId: roomInformation.roomId });
         }
     }
+    
+    useEffect(() => {
+        const removedEmptyQuestions = questions.filter(question => question.question !== "");
+        const questionsWithAuthorTmp = removedEmptyQuestions.map(question => ({ ...question, author: socket.id }));
+        setQuestionsWithAuthor(questionsWithAuthorTmp);
+
+        // Listen for the 'finish writing questions' event and emit 'player finished writing' when triggered
+        socket.on("finish writing questions", () => {
+            console.log("questions With Author", questionsWithAuthorTmp);
+            socket.emit("player finished writing", { questions: questionsWithAuthorTmp, roomId: roomInformation.roomId });
+        });
+
+        return () => {
+            // Cleanup socket listener
+            socket.off("finish writing questions");
+        };
+    }, [questions, socket]);
+
 
     return (
         <Flex direction="column" alignItems="center" justifyContent="center" textAlign="center">
@@ -128,7 +148,6 @@ export function QuestionWritingPhase({ roomInformation, userState, setUserState 
                     <Text>Now wait for the other players to finish or until the timer runs out.</Text>
                 </>
             )}
-
             <Button onClick={() => setUserState("questionWriteTime")}>Go Back</Button>
         </Flex>
     );

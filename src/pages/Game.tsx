@@ -105,6 +105,8 @@ export function Game() {
         componentToRender = <Lobby roomInformation={roomInformation} />;
     } else if (gameState === GameState.QuestionWriteTime) {
         componentToRender = <QuestionWritingPhase roomInformation={roomInformation} userState={userState} setUserState={setUserState} gameState={gameState} />;
+    } else if (gameState === GameState.QuestionVoteTime) {
+        componentToRender = <div>Vote time</div>;
     } else if (userState === UserState.Ended) {
         componentToRender = <div>The game has ended.</div>;
     }

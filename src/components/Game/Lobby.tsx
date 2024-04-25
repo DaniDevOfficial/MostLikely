@@ -28,12 +28,13 @@ export function Lobby({ roomInformation }: Props) {
 
     useEffect(() => {
         if (roomInformation && roomInformation.players) {
-            if (roomInformation.players.length > 0) {
+
+            if (roomInformation.players.length < 0) {
+                setPlayers([tmpUser]);
+            } else {
                 const tmp: Player[] = roomInformation.players;
                 tmp[0].role = "host";
                 setPlayers(tmp);
-            } else {
-                setPlayers([tmpUser]);
             }
         }
         if (roomInformation && roomInformation.game && roomInformation.game.settings) {
@@ -119,7 +120,7 @@ export function Lobby({ roomInformation }: Props) {
                         <Text my={3}>Vote time: <chakra.a fontWeight={"bold"}>{settings.VoteTime} Seconds</chakra.a>  {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"VoteTime"} onUpadate={changeSingleSetting} description={"the Time for Voting (in seconds)"} />      </chakra.a>} </Text>
                         <Text my={3}>Amount of Questions Per Player: <chakra.a fontWeight={"bold"}>{settings.AmountOfQuestionsPerPlayer}</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"AmountOfQuestionsPerPlayer"} onUpadate={changeSingleSetting} description={"the Amount of Questions a User can Write (recomended to be a max of 5)"} />      </chakra.a>}   </Text>
                     </Box>
-                    {thisPlayer.role === "host" && <Button colorScheme='pink' mt={5}  w="100%" onClick={startGame}>Start game when everyone is ready</Button>}
+                    {thisPlayer?.role === "host" && <Button colorScheme='pink' mt={5} w="100%" onClick={startGame}>Start game when everyone is ready</Button>}
                 </Box>
                 <Flex
                     gap={50}
