@@ -7,6 +7,7 @@ import { UserSelection } from "../components/Game/UserSelection";
 import { Lobby } from "../components/Game/Lobby";
 import { QuestionWritingPhase } from "../components/Game/QuestionWritingPhase";
 import { VotingPhase } from "../components/Game/VotingPhase";
+import { EndScreen } from "../components/Game/EndScreen";
 
 enum UserState {
     NameChose = "nameChose",
@@ -108,8 +109,8 @@ export function Game() {
         componentToRender = <QuestionWritingPhase roomInformation={roomInformation} userState={userState} setUserState={setUserState} gameState={gameState} />;
     } else if (gameState === GameState.QuestionVoteTime) {
         componentToRender = <VotingPhase roomInformation={roomInformation} userState={userState} setUserState={setUserState} />;
-    } else if (userState === UserState.Ended) {
-        componentToRender = <div>The game has ended.</div>;
+    } else if (gameState === GameState.Ended) {
+        componentToRender = <EndScreen roomInformation={roomInformation} />;
     }
 
     return (<>

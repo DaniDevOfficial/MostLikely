@@ -36,7 +36,7 @@ export interface Question {
 
 export interface Vote {
     toWho: string;
-    amountOfVotes: number;
+    fromWhoId: string;
 }
 
 

@@ -1,40 +1,31 @@
-import { Button, Flex, Heading } from '@chakra-ui/react';
+import { Box, Button, Flex, Heading, Text } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import { PlayerVoteForm } from '../PlayerVoteForm';
+import { socket } from '../../configs/socket';
+import { SendYourVote } from './SendYourVote';
 
 export function VotingPhase({ roomInformation, userState, setUserState }) {
-    const [selectedPlayer, setSelectedPlayer] = useState(null);
-    const currentQuestion = roomInformation.questions.find(question => question.id === roomInformation.voting[0]);
-    const allPlayers = roomInformation.players;
 
-    function handleVote() {
-        // Check if a player is selected
-        if (selectedPlayer) {
-            console.log(`Voted for ${selectedPlayer}`);
+    const currentVotePhase = roomInformation.voting[1];
+    console.log(currentVotePhase)
+    console.log(roomInformation)
 
-            setSelectedPlayer(null);
-        } else {
-            // Handle case when no player is selected
-            console.log("Please select a player to vote for.");
-        }
-    }
 
     return (
-        <Flex
-            justifyContent="center"
-            alignItems="center"
-            flexDirection="column"
-        >
-            <Heading>Voting Phase</Heading>
-            <Heading>{currentQuestion.question}</Heading>
+        <Box>
+            {currentVotePhase === "voting" ? (
+                <SendYourVote roomInformation={roomInformation} userState={userState} setUserState={setUserState} />
+            ) : (
+                <>
+                    <p>Done voting</p>
+                    <Button onClick={() => socket.emit("next vote", roomInformation.roomId)}>next Question</Button>
+                </>
+            )}
 
-            {/* Render PlayerVoteForm component */}
-            <PlayerVoteForm
-                allPlayers={allPlayers}
-                handlePlayerSelect={setSelectedPlayer}
-            />
 
-            <Button colorScheme='pink' onClick={handleVote}>Done Voting</Button>
-        </Flex>
+
+
+        </Box>
+
     );
 }
