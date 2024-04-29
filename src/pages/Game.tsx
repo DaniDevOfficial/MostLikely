@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom";
 import { socket } from "../configs/socket";
-import { Button } from "@chakra-ui/react";
+import { Button, useToast } from "@chakra-ui/react";
 import { Room } from "../types/Rooms";
 import { UserSelection } from "../components/Game/UserSelection";
 import { Lobby } from "../components/Game/Lobby";
 import { QuestionWritingPhase } from "../components/Game/QuestionWritingPhase";
 import { VotingPhase } from "../components/Game/VotingPhase";
 import { EndScreen } from "../components/Game/EndScreen";
+import { toastOptions } from "../configs/chakra";
 
 enum UserState {
     NameChose = "nameChose",
@@ -33,6 +34,7 @@ enum GameState {
 export function Game() {
     const params = useParams();
     const navigate = useNavigate();
+    const toast = useToast();
     const [username, setUsername] = useState("");
     const [profilePicture, setProfilePicture] = useState("");
     const [connectedUsers, setConnectedUsers] = useState([]);
@@ -53,6 +55,8 @@ export function Game() {
         socket.emit("join", params.id)
 
     }, []);
+
+
 
     useEffect(() => {
         socket.on("room does not exist", () => {
@@ -89,6 +93,53 @@ export function Game() {
 
             console.log(roomInformation);
             setRoomInformation(roomInformation);
+        });
+
+        socket.on("room deleted", (room) => {
+            toast({
+                title: "Room deleted",
+                description: "The room you were in was deleted due to inactivity.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+            navigate(`/`);
+            return () => {
+                socket.off("joined");
+                socket.off("room does not exist");
+                socket.off("room exists");
+                socket.off("room deleted");
+            };
+        });
+
+        socket.on("restart warning", (timeUntilRestart) => {
+            console.log(timeUntilRestart)
+            const minutesUntilRestart = Math.floor(timeUntilRestart.timeUntilRestart / 60 / 1000);
+            console.log(minutesUntilRestart)
+            toast({
+                title: "Server Restart",
+                description: `The server will restart in about ${minutesUntilRestart} minutes. Please finish your game.`,
+                status: "warning",
+                duration: 5000,
+                isClosable: true,
+            });
+            return () => {
+                socket.off("restart warning");
+            };
+        });
+
+        socket.on("server restart", () => {
+            toast({
+                title: "Server Restart",
+                description: "The server was restarted. Please refresh the page.",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            });
+            navigate(`/`);
+            return () => {
+                socket.off("server restart");
+            };
         });
 
         return () => {

@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import { PlayerVoteForm } from '../PlayerVoteForm';
 import { socket } from '../../configs/socket';
 import { SendYourVote } from './SendYourVote';
+import { LookingAtAnswers } from './LookingAtAnswers';
 
 export function VotingPhase({ roomInformation, userState, setUserState }) {
 
     const currentVotePhase = roomInformation.voting[1];
-    console.log(currentVotePhase)
-    console.log(roomInformation)
+
 
 
     return (
@@ -17,8 +17,7 @@ export function VotingPhase({ roomInformation, userState, setUserState }) {
                 <SendYourVote roomInformation={roomInformation} userState={userState} setUserState={setUserState} />
             ) : (
                 <>
-                    <p>Done voting</p>
-                    <Button onClick={() => socket.emit("next vote", roomInformation.roomId)}>next Question</Button>
+                    <LookingAtAnswers roomInformation={roomInformation} />
                 </>
             )}
 

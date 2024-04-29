@@ -29,7 +29,7 @@ export function Lobby({ roomInformation }: Props) {
     useEffect(() => {
         if (roomInformation && roomInformation.players) {
 
-            if (roomInformation.players.length < 0) {
+            if (roomInformation.players.length <= 0) {
                 setPlayers([tmpUser]);
             } else {
                 const tmp: Player[] = roomInformation.players;
@@ -68,6 +68,19 @@ export function Lobby({ roomInformation }: Props) {
             isClosable: true,
         });
     }
+
+    function kickPlayer(playerId) {
+        const kickedPlayer = players.find(player => player.playerId === playerId);
+        const kickData = {
+            roomId: params.id,
+            playerId: playerId
+        }
+        socket.emit("kick player", kickData);
+        console.log(`Player ${kickedPlayer.name} got kicked!`);
+        console.log(kickedPlayer)
+    }
+
+
     return (
         <>
             <Box textAlign="center">
@@ -112,14 +125,20 @@ export function Lobby({ roomInformation }: Props) {
                         flexDir={"column"}
                         borderRadius={"20px"}
                         alignItems={{ base: "center", md: "baseline" }}
-
                     >
                         <Text fontSize="2xl" fontWeight="bold" my={5}>Game settings</Text>
                         <Text fontSize={"x-small"}> Only the Lobby host can change the Settings</Text>
-                        <Text my={3}>Time For Writing Questions: <chakra.a fontWeight={"bold"}>{settings.QuestionWriteTime} Seconds</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"QuestionWriteTime"} onUpadate={changeSingleSetting} description={"the Time for Writing Questions (in seconds)"} />      </chakra.a>} </Text>
-                        <Text my={3}>Vote time: <chakra.a fontWeight={"bold"}>{settings.VoteTime} Seconds</chakra.a>  {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"VoteTime"} onUpadate={changeSingleSetting} description={"the Time for Voting (in seconds)"} />      </chakra.a>} </Text>
-                        <Text my={3}>Amount of Questions Per Player: <chakra.a fontWeight={"bold"}>{settings.AmountOfQuestionsPerPlayer}</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"AmountOfQuestionsPerPlayer"} onUpadate={changeSingleSetting} description={"the Amount of Questions a User can Write (recomended to be a max of 5)"} />      </chakra.a>}   </Text>
+                        <chakra.div my={3}>
+                            Time For Writing Questions: <chakra.a fontWeight={"bold"}>{settings.QuestionWriteTime} Seconds</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"QuestionWriteTime"} onUpadate={changeSingleSetting} description={"the Time for Writing Questions (in seconds)"} /> </chakra.a>}
+                        </chakra.div>
+                        <chakra.div my={3}>
+                            Vote time: <chakra.a fontWeight={"bold"}>{settings.VoteTime} Seconds</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"VoteTime"} onUpadate={changeSingleSetting} description={"the Time for Voting (in seconds)"} /> </chakra.a>}
+                        </chakra.div>
+                        <chakra.div my={3}>
+                            Amount of Questions Per Player: <chakra.a fontWeight={"bold"}>{settings.AmountOfQuestionsPerPlayer}</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"AmountOfQuestionsPerPlayer"} onUpadate={changeSingleSetting} description={"the Amount of Questions a User can Write (recommended to be a max of 5)"} /> </chakra.a>}
+                        </chakra.div>
                     </Box>
+
                     {thisPlayer?.role === "host" && <Button colorScheme='pink' mt={5} w="100%" onClick={startGame}>Start game when everyone is ready</Button>}
                 </Box>
                 <Flex
@@ -141,6 +160,7 @@ export function Lobby({ roomInformation }: Props) {
                                 fallbackSrc="https://via.placeholder.com/50"
                             />
                             <Text textAlign={"center"}>{player.name}</Text>
+                            {player === thisPlayer && <Text>This is you!</Text>}
                             {player.role &&
                                 <Text
                                     bg={"gray.200"}
@@ -152,9 +172,24 @@ export function Lobby({ roomInformation }: Props) {
                                     {player.role}
                                 </Text>
                             }
+
+                            {thisPlayer?.role === "host" && player !== thisPlayer  && (
+                                <Text
+                                    color={"red"}
+                                    fontSize={"sm"}
+                                    textAlign={"center"}
+                                    onClick={() => kickPlayer(player.playerId)}
+                                    style={{ cursor: "pointer" }}
+                                >
+                                    Kick This Player
+                                </Text>
+                            )}
+
                         </Flex>
                     ))}
                 </Flex>
+
+
             </Flex>
         </>
     );

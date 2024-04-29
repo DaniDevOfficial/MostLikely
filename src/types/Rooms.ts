@@ -32,6 +32,7 @@ export interface Question {
     question: string;
     author: string;
     votes?: Vote[];
+    tally?: { toWho: string; amountOfVotes: number }[];
 }
 
 export interface Vote {
