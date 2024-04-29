@@ -1,38 +1,38 @@
-import { Button, Heading, Input } from '@chakra-ui/react'
+import { Button, Flex, Heading, Input } from '@chakra-ui/react'
 import React from 'react'
 import { socket } from '../../configs/socket';
 import { useParams } from 'react-router-dom';
 
 export function UserSelection({ setUsername, setProfilePicture, setUserState }) {
     const names = [
-        "David", 
-        "Dave", 
-        "Delfin 🐬", 
-        "Sondong", 
-        "LaBebe 🦧🦧", 
-        "Bingus", 
-        "Léonat", 
-        "Spoingus", 
-        "Abbash getter", 
-        "Oatmeal", 
-        "Sir Laveen Silverdragon Gamadon III", 
-        "Wise Car", 
-        "Delvin Ze Dong", 
-        "Herbert", 
-        "David Bischgauvsethi", 
-        "Big Floppa", 
-        "Léooo van Goof", 
-        "Megatron", 
-        "Lucas Fentaly Heisenberg", 
-        "Kevin", 
-        "Justin Caliou 👨‍🦲", 
-        "Divad Hoffgetter", 
-        "Security Car", 
-        "Sanjana Paramanantharajas Katamarana", 
-        "Veteran Car", 
-        "Sad Hampter", 
-      ];
-            
+        "David",
+        "Dave",
+        "Delfin 🐬",
+        "Sondong",
+        "LaBebe 🦧🦧",
+        "Bingus",
+        "Léonat",
+        "Spoingus",
+        "Abbash getter",
+        "Oatmeal",
+        "Sir Laveen Silverdragon Gamadon III",
+        "Wise Car",
+        "Delvin Ze Dong",
+        "Herbert",
+        "David Bischgauvsethi",
+        "Big Floppa",
+        "Léooo van Goof",
+        "Megatron",
+        "Lucas Fentaly Heisenberg",
+        "Kevin",
+        "Justin Caliou 👨‍🦲",
+        "Divad Hoffgetter",
+        "Security Car",
+        "Sanjana Paramanantharajas Katamarana",
+        "Veteran Car",
+        "Sad Hampter",
+    ];
+
     const [name, setName] = React.useState(names[Math.floor(Math.random() * names.length)]);
     const [tmpProfilePicture, setTmpProfilePicture] = React.useState("None");
     const params = useParams();
@@ -55,24 +55,32 @@ export function UserSelection({ setUsername, setProfilePicture, setUserState }) 
     function handleUserSelection() {
         if (name === "") {
             return;
-        } 
+        }
         setUsername(name);
         setProfilePicture(tmpProfilePicture);
         const randomFallback = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
         setUserState("waiting");
         socket.emit("user selection", { name, profilePicture: randomFallback, room });
     }
-    
+
     return (
         <>
-            <Heading>Choose your name</Heading>
-            <Input
-                onChange={(e) => setName(e.target.value)}
-                maxLength={15}
-                value={name}
-                placeholder="Name" />
+            <Flex
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                gap={5}
+            >
 
-            <Button onClick={handleUserSelection}>Done</Button>
+                <Heading>Choose your name</Heading>
+                <Input
+                    onChange={(e) => setName(e.target.value)}
+                    maxLength={15}
+                    value={name}
+                    placeholder="Name" />
+
+                <Button colorScheme='pink' onClick={handleUserSelection}>Done</Button>
+            </Flex>
         </>
     )
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Text, UnorderedList, ListItem, Image, Flex, useToast, Heading, chakra, Input, Button } from '@chakra-ui/react';
+import { Box, Text, UnorderedList, ListItem, Image, Flex, useToast, Heading, chakra, Input, Button, useColorModeValue, useColorMode, color } from '@chakra-ui/react';
 import { useLocation, useParams } from 'react-router-dom';
 import { GameSettings, Player, Room } from '../../types/Rooms';
 import { socket } from '../../configs/socket';
@@ -15,6 +15,7 @@ export function Lobby({ roomInformation }: Props) {
     const [settings, setSettings] = useState<GameSettings>([]);
     const [thisPlayer, setThisPlayer] = useState<Player>([]);
     const params = useParams();
+    const { toggleColorMode, colorMode } = useColorMode();
     const currentUrl = window.location.href;
     const toast = useToast();
     const tmpUser = {
@@ -33,7 +34,6 @@ export function Lobby({ roomInformation }: Props) {
                 setPlayers([tmpUser]);
             } else {
                 const tmp: Player[] = roomInformation.players;
-                tmp[0].role = "host";
                 setPlayers(tmp);
             }
         }
@@ -118,7 +118,7 @@ export function Lobby({ roomInformation }: Props) {
 
                     <Box
                         w={{ base: "100%", md: "450px" }}
-                        bg={"gray.100"}
+                        bg={useColorModeValue("gray.100", "gray.700")}
                         px={10}
                         py={5}
                         display={"flex"}
@@ -126,8 +126,8 @@ export function Lobby({ roomInformation }: Props) {
                         borderRadius={"20px"}
                         alignItems={{ base: "center", md: "baseline" }}
                     >
-                        <Text fontSize="2xl" fontWeight="bold" my={5}>Game settings</Text>
-                        <Text fontSize={"x-small"}> Only the Lobby host can change the Settings</Text>
+                        <Text fontSize="2xl" fontWeight="bold" my={5}>Game Settings</Text>
+                        <Text fontSize={"x-small"}> Only the Lobby Host can change the Settings</Text>
                         <chakra.div my={3}>
                             Time For Writing Questions: <chakra.a fontWeight={"bold"}>{settings.QuestionWriteTime} Seconds</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"QuestionWriteTime"} onUpadate={changeSingleSetting} description={"the Time for Writing Questions (in seconds)"} /> </chakra.a>}
                         </chakra.div>
@@ -135,11 +135,11 @@ export function Lobby({ roomInformation }: Props) {
                             Vote time: <chakra.a fontWeight={"bold"}>{settings.VoteTime} Seconds</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"VoteTime"} onUpadate={changeSingleSetting} description={"the Time for Voting (in seconds)"} /> </chakra.a>}
                         </chakra.div>
                         <chakra.div my={3}>
-                            Amount of Questions Per Player: <chakra.a fontWeight={"bold"}>{settings.AmountOfQuestionsPerPlayer}</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"AmountOfQuestionsPerPlayer"} onUpadate={changeSingleSetting} description={"the Amount of Questions a User can Write (recommended to be a max of 5)"} /> </chakra.a>}
+                            Amount of Questions per Player: <chakra.a fontWeight={"bold"}>{settings.AmountOfQuestionsPerPlayer}</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"AmountOfQuestionsPerPlayer"} onUpadate={changeSingleSetting} description={"the Amount of Questions a User can Write (recommended to be a max of 5)"} /> </chakra.a>}
                         </chakra.div>
                     </Box>
 
-                    {thisPlayer?.role === "host" && <Button colorScheme='pink' mt={5} w="100%" onClick={startGame}>Start game when everyone is ready</Button>}
+                    {thisPlayer?.role === "host" && <Button colorScheme='pink' mt={5} w="100%" onClick={startGame}>Start the Game when everyone is Ready 🚀🚀</Button>}
                 </Box>
                 <Flex
                     gap={50}
@@ -160,10 +160,10 @@ export function Lobby({ roomInformation }: Props) {
                                 fallbackSrc="https://via.placeholder.com/50"
                             />
                             <Text textAlign={"center"}>{player.name}</Text>
-                            {player === thisPlayer && <Text>This is you!</Text>}
+                            {player === thisPlayer && <Text>This is You!</Text>}
                             {player.role &&
                                 <Text
-                                    bg={"gray.200"}
+                                    bg={colorMode === "light" ? "blue.400" : "blue.600"}
                                     p={1}
                                     px={3}
                                     fontSize={"sm"}
@@ -173,15 +173,18 @@ export function Lobby({ roomInformation }: Props) {
                                 </Text>
                             }
 
-                            {thisPlayer?.role === "host" && player !== thisPlayer  && (
+                            {thisPlayer?.role === "host" && player !== thisPlayer && (
                                 <Text
-                                    color={"red"}
+                                    bg={colorMode === "light" ? "red.400" : "red.600"}
+                                    p={1}
+                                    px={3}
                                     fontSize={"sm"}
-                                    textAlign={"center"}
+                                    color={"white"}
+                                    borderRadius={"100px"}
                                     onClick={() => kickPlayer(player.playerId)}
                                     style={{ cursor: "pointer" }}
                                 >
-                                    Kick This Player
+                                    Kick this Player
                                 </Text>
                             )}
 

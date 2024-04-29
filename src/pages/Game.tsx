@@ -46,9 +46,25 @@ export function Game() {
         socket.emit("leave", params.id);
         navigate(`/`);
     }
+    const tmpUser = {
+        name: "User",
+        profilePicture: "https://via.placeholder.com/50",
+        role: "host",
+        playerId: "12345"
+    }
 
     useEffect(() => {
         setGameState(roomInformation.game?.state);
+        if (roomInformation && roomInformation.players) {
+
+            if (roomInformation.players.length <= 0) {
+                setAllUsers([tmpUser]);
+            } else {
+                const tmp: Player[] = roomInformation.players;
+                tmp[0].role = "host";
+                setAllUsers(tmp);
+            }
+        }
     }, [roomInformation]);
     useEffect(() => {
         socket.emit("check if room exists", params.id);
@@ -68,11 +84,6 @@ export function Game() {
             };
         });
 
-        socket.on("left", ({ roomInformation }) => {
-            console.log(roomInformation)
-            setRoomInformation(roomInformation);
-        });
-
         socket.on("joined", ({ room, users: usersInRoom }) => {
             console.log(usersInRoom)
             setConnectedUsers(usersInRoom);
@@ -82,16 +93,8 @@ export function Game() {
         });
         socket.on("room information updated", (roomInformation) => {
             console.log(roomInformation);
-            setRoomInformation(roomInformation);
-        });
-
-        socket.on("game started", (roomInformation) => {
-            setRoomInformation(roomInformation);
-        });
-
-        socket.on('user selected', (roomInformation) => {
-
-            console.log(roomInformation);
+            roomInformation.players[0].role = "host";
+        
             setRoomInformation(roomInformation);
         });
 

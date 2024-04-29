@@ -24,7 +24,7 @@ export function PlayerVoteForm({ allPlayers, handlePlayerSelect }) {
     };
 
     return (
-        <FormControl isRequired my={5}>
+        <FormControl w={"80%"} isRequired my={5}>
             <FormHelperText>Enter the name of the player to vote for (you can enter any name)</FormHelperText>
             <Input
                 value={searchText}
