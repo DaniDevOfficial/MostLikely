@@ -5,6 +5,7 @@ import randomQuestions from '../../data/random_questions.json'
 import { FaRandom } from "react-icons/fa";
 import { socket } from '../../configs/socket';
 import { useParams } from 'react-router-dom';
+import { TitleBoxWithSub } from '../TitleBoxWithSub';
 
 interface Props {
     roomInformation: Room;
@@ -124,11 +125,11 @@ export function QuestionWritingPhase({ roomInformation, userState, setUserState 
 
     return (
         <Flex direction="column" alignItems="center" justifyContent="center" textAlign="center">
-            <Heading>Question Writing Phase</Heading>
-            <Text>
-                Now you have to write questions for the next game step. The questions should be answerable with a name.
-                E.g. Who is the most likely to eat grass?
-            </Text>
+
+
+            <TitleBoxWithSub title="Question Writing Phase" subtitle="Now you have to write questions for the next game step. The questions should be answerable with a name.
+                E.g. Who is the most likely to eat grass?" />
+
             <Text fontWeight="bold">
                 You still have {timeLeft} Second{timeLeft === 1 ? '' : 's'} left
             </Text>
@@ -146,7 +147,6 @@ export function QuestionWritingPhase({ roomInformation, userState, setUserState 
                     <Text>Now wait for the other players to finish or until the timer runs out.</Text>
                 </>
             )}
-            <Button onClick={() => setUserState("questionWriteTime")}>Go Back</Button>
         </Flex>
     );
 }

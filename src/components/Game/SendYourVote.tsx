@@ -1,17 +1,19 @@
-import { Flex, Heading, Button, Text } from '@chakra-ui/react'
+import { Flex, Heading, Button, Text, useColorMode } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
 import { socket } from '../../configs/socket'
 import { PlayerVoteForm } from '../PlayerVoteForm'
 import { TitleBoxWithSub } from '../TitleBoxWithSub';
 
 export function SendYourVote({ roomInformation, userState, setUserState }) {
+    const { toggleColorMode, colorMode } = useColorMode();
 
-    const [selectedPlayer, setSelectedPlayer] = useState(null);
+    const [selectedPlayer, setSelectedPlayer] = useState("");
     const currentQuestion = roomInformation.questions.find(question => question.id === roomInformation.voting[0]);
     const amountOfPlayers = roomInformation.players.length || 0;
     const amountFinishedWriting = (currentQuestion.votes && currentQuestion.votes.length) || 0;
     const allPlayers = roomInformation.players;
     useEffect(() => {
+        setSelectedPlayer("");
         setUserState("questionVoteTime");
     }, []);
     function handleVote() {
@@ -31,7 +33,10 @@ export function SendYourVote({ roomInformation, userState, setUserState }) {
             console.log("Please select a player to vote for.");
         }
     }
-
+    function getAuthorName(authorId: string) {
+        const author = roomInformation.players.find(player => player.playerId === authorId);
+        return author?.name || "Unknown";
+    }
     return (
         <>
             <Flex
@@ -39,7 +44,7 @@ export function SendYourVote({ roomInformation, userState, setUserState }) {
                 alignItems="center"
                 flexDirection="column"
             >
-                <TitleBoxWithSub title="Vote for a Person" subtitle={currentQuestion.question} />
+                <TitleBoxWithSub title="Vote for a Person" subtitle={currentQuestion.question} subSubTitle={`Author: ${getAuthorName(currentQuestion.author)}`} />
                 <Text>
                     {amountFinishedWriting} out of {amountOfPlayers} Players {amountFinishedWriting === 1 ? "is" : "are"} Finished with Answering
 

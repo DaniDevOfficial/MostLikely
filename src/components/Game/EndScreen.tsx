@@ -1,36 +1,19 @@
-import { Box, Button } from '@chakra-ui/react'
-import React from 'react'
+import { Box, Button, Flex, Text, useColorMode } from '@chakra-ui/react'
 import { socket } from '../../configs/socket'
 import { Question, Vote } from '../../types/Rooms';
+import { TitleBoxWithSub } from '../TitleBoxWithSub';
+import { ScoreBoard } from '../ScoreBoard';
 
 export function EndScreen({ roomInformation }) {
 
 
-
-    function tallyVotes(questions: Question[]): Question[] {
-        questions.forEach((question: Question) => {
-            const tally: { [key: string]: number } = {};
-            if (question.votes) {
-                question.votes.forEach((vote: Vote) => {
-                    const toWho: string = vote.toWho;
-                    tally[toWho] = (tally[toWho] || 0) + 1;
-                });
-            }
-            question.tally = []; 
-            for (const person in tally) {
-                question.tally.push({ toWho: person, amountOfVotes: tally[person] });
-            }
-            if (Object.keys(tally).length === 0) {
-                question.tally.push({ toWho: 'nobody voted', amountOfVotes: 0 });
-            }
-            question.tally.sort((a, b) => b.amountOfVotes - a.amountOfVotes);
-        });
-        return questions;
-    }
+    const { toggleColorMode, colorMode } = useColorMode();
 
 
+    const thisPlayer = roomInformation.players.find((player) => player.playerId === socket.id);
 
     // Example usage:
+    /* 
     const questions = [
         {
             id: 0,
@@ -50,23 +33,44 @@ export function EndScreen({ roomInformation }) {
             ]
         }
     ];
+    */
+    function getAuthorName(authorId: string) {
+        const author = roomInformation.players.find(player => player.playerId === authorId);
+        return author?.name || "Unknown";
+    }
+    const questions = roomInformation.questions;
 
-
-    const questionsWithTally = tallyVotes(questions);
-    console.log(questionsWithTally);
     return (
         <>
-            <Box>
-                <h1>Game Over</h1>
-                <ul>
-                    {roomInformation.players.map(player => (
-                        <li key={player.id}>
-                            <p>{player.name}</p>
-                        </li>
-                    ))}
-                </ul>
-                <Button onClick={() => socket.emit("reset game", roomInformation.roomId)}>Restart Game</Button>
-            </Box>
+            <Flex
+                direction="column"
+                alignItems="center"
+                textAlign={"center"}
+            >
+
+                <TitleBoxWithSub title="You finished this Game 😱!!" subtitle="Here are the results of the game in an overview!" />
+                {thisPlayer?.role === "host" && (
+                    <Button colorScheme='pink' onClick={() => socket.emit("reset game", roomInformation.roomId)}>Play another Round</Button>
+                )}
+                {questions.map(question => (
+                    <Flex
+                        w={"100%"}
+                        direction="column"
+                        alignItems="center"
+                        my={7}
+                        gap={4}
+                    >
+                        <Box w={{ base: "80%", md: "60%" }} bg={colorMode === "light" ? "gray.100" : "gray.700"} p={4} boxShadow="md" borderRadius="md">
+                            <Text>
+                                {question.question}
+                            </Text>
+                            <Text mt={2} fontSize="sm" color={colorMode === "light" ? "gray.600" : "gray.400"}>{`Author: ${getAuthorName(question.author)}`}</Text>
+
+                        </Box>
+                        <ScoreBoard question={question} />
+                    </Flex>
+                ))}
+            </Flex>
         </>
     )
 }

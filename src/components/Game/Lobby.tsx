@@ -125,6 +125,7 @@ export function Lobby({ roomInformation }: Props) {
                         flexDir={"column"}
                         borderRadius={"20px"}
                         alignItems={{ base: "center", md: "baseline" }}
+                        boxShadow="md"
                     >
                         <Text fontSize="2xl" fontWeight="bold" my={5}>Game Settings</Text>
                         <Text fontSize={"x-small"}> Only the Lobby Host can change the Settings</Text>
@@ -158,6 +159,7 @@ export function Lobby({ roomInformation }: Props) {
                                 src={player.profilePicture}
                                 alt={player.name}
                                 fallbackSrc="https://via.placeholder.com/50"
+                                boxShadow="md"
                             />
                             <Text textAlign={"center"}>{player.name}</Text>
                             {player === thisPlayer && <Text>This is You!</Text>}

@@ -1,5 +1,5 @@
 import { FormControl, FormLabel, FormHelperText, Input, List, ListItem, Button } from '@chakra-ui/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export function PlayerVoteForm({ allPlayers, handlePlayerSelect }) {
     const [searchText, setSearchText] = useState('');
@@ -7,6 +7,7 @@ export function PlayerVoteForm({ allPlayers, handlePlayerSelect }) {
 
     const handleInputChange = (event) => {
         const inputText = event.target.value;
+        console.log(inputText)
         setSearchText(inputText);
 
         // Filter suggestions based on input text
@@ -16,6 +17,10 @@ export function PlayerVoteForm({ allPlayers, handlePlayerSelect }) {
         handlePlayerSelect(inputText)
         setSuggestions(filteredPlayers);
     };
+
+    useEffect(() => {
+        handleInputChange({ target: { value: '' } })
+    }, []);
 
     const handleSuggestionClick = (player) => {
         setSearchText(player.name);
@@ -30,6 +35,8 @@ export function PlayerVoteForm({ allPlayers, handlePlayerSelect }) {
                 value={searchText}
                 onChange={handleInputChange}
                 placeholder="Enter player name"
+                maxLength={15}
+
             />
             {/* Display suggestions if available */}
             {suggestions.length > 0 && (
