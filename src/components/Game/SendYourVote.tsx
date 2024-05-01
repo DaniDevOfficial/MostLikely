@@ -30,7 +30,7 @@ export function SendYourVote({ roomInformation, userState, setUserState }) {
         return () => clearTimeout(timer);
     }, [timeLeft]);
 
-
+    // TODO: make this so it listens to the event and doest write a new emit only when the current question is the same as the one that is being voted on
     useEffect(() => {
         socket.on("finish voting", () => {
             console.log(currentQuestion);

@@ -29,7 +29,7 @@ export function ChangeSettingsPopover({
     const firstFieldRef = useRef(null);
     const { onOpen, onClose, isOpen } = useDisclosure();
     const noAnim = {}
-    const [setting, setSetting] = useState();
+    const [setting, setSetting] = useState(1);
     useEffect(() => {
         if (setting < 1) {
             setSetting(1)

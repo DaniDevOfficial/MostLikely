@@ -115,7 +115,7 @@ export function Lobby({ roomInformation }: Props) {
                 mt={10}
             >
                 <Box>
-
+                    {/*TODO: idk but there is a problem with the popover part i think */}
                     <Box
                         w={{ base: "100%", md: "450px" }}
                         bg={useColorModeValue("gray.100", "gray.700")}
