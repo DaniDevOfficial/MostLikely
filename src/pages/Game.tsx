@@ -33,6 +33,7 @@ enum GameState {
 
 export function Game() {
     const params = useParams();
+    const roomId = params.id;
     const navigate = useNavigate();
     const toast = useToast();
     const [username, setUsername] = useState("");
@@ -67,8 +68,9 @@ export function Game() {
         }
     }, [roomInformation]);
     useEffect(() => {
-        socket.emit("check if room exists", params.id);
-        socket.emit("join", params.id)
+        console.log(params.id)
+        socket.emit("check if room exists", roomId);
+        socket.emit("join", roomId)
 
     }, []);
 
@@ -76,7 +78,16 @@ export function Game() {
 
     useEffect(() => {
         socket.on("room does not exist", () => {
+            console.log("Room does not exist");
+            console.log("Room ID " + roomId)
             navigate(`/`);
+            toast({
+                title: "It this happened even tho the room exits please reload the page",
+                description: "The room you are trying to join does not exist.",
+                status: "warning",
+                duration: 5000,
+                isClosable: true,
+            });
             return () => {
                 socket.off("joined");
                 socket.off("room does not exist");
@@ -90,11 +101,16 @@ export function Game() {
         });
 
         socket.on("room exists", () => {
+            return () => {
+                socket.off("joined");
+                socket.off("room does not exist");
+                socket.off("room exists");
+            };
         });
         socket.on("room information updated", (roomInformation) => {
             console.log(roomInformation);
             roomInformation.players[0].role = "host";
-        
+
             setRoomInformation(roomInformation);
         });
 

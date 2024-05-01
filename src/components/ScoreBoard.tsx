@@ -5,11 +5,11 @@ export function ScoreBoard({ question }) {
     function tallyUpVotes() {
         const votes = question.votes;
         console.log(votes);
-        if (!votes || votes.length === 0) {
-            console.log("Nobody voted");
-            return { "Nobody": -1 }; // Display "Nobody" with -1 vote
-        }
+
         const voteCount = votes.reduce((acc, vote) => {
+            if (vote?.toWho === "Hehe This is more than 15 characters long") {
+                return acc; // Skip this vote
+            }
             if (acc[vote?.toWho]) {
                 acc[vote?.toWho] += 1;
             } else {
@@ -17,7 +17,11 @@ export function ScoreBoard({ question }) {
             }
             return acc;
         }, {});
-
+        console.log(voteCount);
+        if (!voteCount || voteCount.length === 0 ||Object.keys(voteCount).length === 0) {
+            console.log("Nobody voted");
+            return { "Nobody voted :(": -1 }; // Display "Nobody" with -1 vote
+        }
         const sortedVoteCount = Object.entries(voteCount)
             .sort((a, b) => b[1] - a[1]);
 
@@ -26,7 +30,6 @@ export function ScoreBoard({ question }) {
 
         return sortedVoteCountObject;
     }
-
 
     const currentVoteCounts = tallyUpVotes();
 

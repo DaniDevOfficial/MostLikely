@@ -1,5 +1,5 @@
 import { Button, Flex, Heading, Input } from '@chakra-ui/react'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { socket } from '../../configs/socket';
 import { useParams } from 'react-router-dom';
 
@@ -63,6 +63,7 @@ export function UserSelection({ setUsername, setProfilePicture, setUserState }) 
         socket.emit("user selection", { name, profilePicture: randomFallback, room });
     }
 
+    
     return (
         <>
             <Flex
