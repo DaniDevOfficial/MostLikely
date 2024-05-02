@@ -2,22 +2,31 @@ import { Button, Flex, Heading, Input, useToast } from '@chakra-ui/react'
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { socket } from '../../configs/socket';
+
 export function Landing() {
     const [roomId, setRoomId] = useState("");
+    const [isCreateButtonDisabled, setIsCreateButtonDisabled] = useState(false); // Track button state
     const toast = useToast();
     const navigate = useNavigate();
 
     function joinRoom() {
         if (roomId === "") {
-            return
+            return;
         }
         socket.emit("check if room exists", roomId);
-
     }
 
     function createRoom() {
+        if (isCreateButtonDisabled) {
+            return;
+        }
 
+        setIsCreateButtonDisabled(true); // Disable button
         socket.emit("create");
+
+        setTimeout(() => {
+            setIsCreateButtonDisabled(false); // Re-enable button after 1 second
+        }, 1000);
     }
 
     useEffect(() => {
@@ -57,7 +66,7 @@ export function Landing() {
             socket.off("room exists", handleRoomExists);
             socket.off("created", RoomCreated);
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -86,7 +95,7 @@ export function Landing() {
                     gap={4}
                 >
                     <Heading fontSize="larger">Or create your own lobby</Heading>
-                    <Button type="submit" colorScheme="pink" onClick={createRoom}>Create a new room</Button>
+                    <Button type="submit" colorScheme="pink" onClick={createRoom} isDisabled={isCreateButtonDisabled}>Create a new room</Button>
                 </Flex>
             </Flex>
         </>

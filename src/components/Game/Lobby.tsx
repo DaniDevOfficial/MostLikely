@@ -130,7 +130,7 @@ export function Lobby({ roomInformation }: Props) {
                         <Text fontSize="2xl" fontWeight="bold" my={5}>Game Settings</Text>
                         <Text fontSize={"x-small"}> Only the Lobby Host can change the Settings</Text>
                         <chakra.div my={3}>
-                            Time For Writing Questions: <chakra.a fontWeight={"bold"}>{settings.QuestionWriteTime} Seconds</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"QuestionWriteTime"} onUpadate={changeSingleSetting} description={"the Time for Writing Questions (in seconds)"} /> </chakra.a>}
+                            Time For Writing Questions: <chakra.a fontWeight={"bold"}>{settings.QuestionWriteTime} Seconds</chakra.a>  <chakra.a> <ChangeSettingsPopover whichSetting={"QuestionWriteTime"} onUpadate={changeSingleSetting} description={"the Time for Writing Questions (in seconds)"} /> </chakra.a>
                         </chakra.div>
                         <chakra.div my={3}>
                             Vote time: <chakra.a fontWeight={"bold"}>{settings.VoteTime} Seconds</chakra.a> {thisPlayer?.role === "host" && <chakra.a> <ChangeSettingsPopover whichSetting={"VoteTime"} onUpadate={changeSingleSetting} description={"the Time for Voting (in seconds)"} /> </chakra.a>}

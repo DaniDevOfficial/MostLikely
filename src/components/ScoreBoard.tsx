@@ -4,7 +4,6 @@ export function ScoreBoard({ question }) {
 
     function tallyUpVotes() {
         const votes = question.votes;
-        console.log(votes);
 
         const voteCount = votes.reduce((acc, vote) => {
             if (vote?.toWho === "Hehe This is more than 15 characters long") {
@@ -17,9 +16,7 @@ export function ScoreBoard({ question }) {
             }
             return acc;
         }, {});
-        console.log(voteCount);
         if (!voteCount || voteCount.length === 0 ||Object.keys(voteCount).length === 0) {
-            console.log("Nobody voted");
             return { "Nobody voted :(": -1 }; // Display "Nobody" with -1 vote
         }
         const sortedVoteCount = Object.entries(voteCount)

@@ -3,8 +3,6 @@ import {
     Text,
     ButtonGroup,
     FormControl,
-    FormLabel,
-    Input,
     Popover,
     PopoverArrow,
     PopoverCloseButton,
@@ -13,11 +11,8 @@ import {
     Stack,
     useDisclosure,
     Icon,
-    NumberDecrementStepper,
-    NumberIncrementStepper,
     NumberInput,
     NumberInputField,
-    NumberInputStepper,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { EditIcon } from "@chakra-ui/icons";
@@ -57,7 +52,8 @@ export function ChangeSettingsPopover({
 
                         mb={1}
                         cursor={"pointer"}
-                    />                </PopoverTrigger>
+                    />
+                </PopoverTrigger>
                 <PopoverContent p="5" variants={noAnim}>
                     <PopoverArrow />
                     <PopoverCloseButton />
@@ -65,7 +61,10 @@ export function ChangeSettingsPopover({
                         <Text>Update {description}</Text>
                         <FormControl>
                             <NumberInput min={1} max={1000}>
-                                <NumberInputField value={setting} onChange={(e) => { setSetting(e.target.value) }} />
+                                <NumberInputField
+                                    value={setting}
+                                    onChange={(e) => { setSetting(parseInt(e.target.value)) }}
+                                />
                             </NumberInput>
                         </FormControl>
 

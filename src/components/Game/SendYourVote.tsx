@@ -30,10 +30,13 @@ export function SendYourVote({ roomInformation, userState, setUserState }) {
         return () => clearTimeout(timer);
     }, [timeLeft]);
 
-    // TODO: make this so it listens to the event and doest write a new emit only when the current question is the same as the one that is being voted on
     useEffect(() => {
-        socket.on("finish voting", () => {
+        socket.on("finish voting", (forWhichQuestion) => {
             console.log(currentQuestion);
+            console.log("tmpRoomInfo", forWhichQuestion);
+            const currentQuestionId = currentQuestion.id;
+            console.log("currentQuestionId", currentQuestionId)
+            if (forWhichQuestion !== currentQuestion.id) return console.log("This is the wrong question");
             if (currentQuestion.votes && currentQuestion.votes.some(vote => vote.fromWhoId === socket.id)) {
                 console.log(`You have already voted for this question.`);
                 return;
@@ -48,12 +51,13 @@ export function SendYourVote({ roomInformation, userState, setUserState }) {
                 fromWhoId: socket.id
             };
 
-            console.log(vote);
             socket.emit("vote", { vote, roomId: roomInformation.roomId, questionId: currentQuestion.id });
         });
-    }, []);
+        return () => {
+            socket.off("finish voting");
+        }
+    }, [selectedPlayer]);
     function handleVote() {
-        // Check if a player is selected
         if (selectedPlayer) {
             console.log(`Voted for ${selectedPlayer}`);
             const vote = {
@@ -61,7 +65,6 @@ export function SendYourVote({ roomInformation, userState, setUserState }) {
                 fromWhoId: socket.id
             };
 
-            console.log(vote);
             socket.emit("vote", { vote, roomId: roomInformation.roomId, questionId: currentQuestion.id });
             setUserState("questionVoteDone");
         } else {
@@ -73,7 +76,7 @@ export function SendYourVote({ roomInformation, userState, setUserState }) {
         const author = roomInformation.players.find(player => player.playerId === authorId);
         return author?.name || "Unknown";
     }
-    
+
     return (
         <>
             <Flex
