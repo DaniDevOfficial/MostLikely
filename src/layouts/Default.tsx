@@ -17,15 +17,15 @@ export function DefaultLayout() {
                             size="md"
                             position="fixed"
                             top={4}
-                            backgroundColor={colorMode === "dark" ? "red.700" : "red.200"}
-                            color={colorMode === "dark" ? "gray.200" : "gray.600"}
+                            backgroundColor={colorMode === "dark" ? "red.700" : "red.400"}
+                            color={colorMode === "dark" ? "gray.200" : "gray.100"}
                             _hover={{ backgroundColor: colorMode === "dark" ? "red.800" : "red.300" }}
                             right={4}
                             onClick={() => window.location.reload()}
                             icon={<WarningIcon />}
                         />
                     </Tooltip>
-                    <Container maxW={"6xl"}>
+                    <Container maxW={"6xl"} color={colorMode === "dark" ? "gray.400" : "gray.700" }>
                         <Outlet />
                     </Container>
                 </chakra.main>

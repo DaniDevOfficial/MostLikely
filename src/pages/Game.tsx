@@ -81,13 +81,6 @@ export function Game() {
             console.log("Room does not exist");
             console.log("Room ID " + roomId)
             navigate(`/`);
-            toast({
-                title: "It this happened even tho the room exits please reload the page",
-                description: "The room you are trying to join does not exist.",
-                status: "warning",
-                duration: 5000,
-                isClosable: true,
-            });
             return () => {
                 socket.off("joined");
                 socket.off("room does not exist");

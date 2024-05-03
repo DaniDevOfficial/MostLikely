@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, Input, useToast } from '@chakra-ui/react'
+import { Button, Flex, Heading, Input, useToast, Text } from '@chakra-ui/react'
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { socket } from '../../configs/socket';
@@ -72,12 +72,13 @@ export function Landing() {
     return (
         <>
             <Heading>Hey There👋, Welcome to TopTraits </Heading>
-
+            <Text fontSize={"x-small"} > If the Lobby doesn't start instatly please hold for a minute because the backend shuts down during inactivity.</Text>
             <Flex
                 flexDirection={{ base: "column", md: "row" }}
                 justifyContent="center"
                 mt={10}
                 gap={{ base: 4, md: 40 }}
+                mb={"20vh"}
             >
                 <Flex
                     flexDirection="column"
@@ -98,6 +99,7 @@ export function Landing() {
                     <Button type="submit" colorScheme="pink" onClick={createRoom} isDisabled={isCreateButtonDisabled}>Create a new room</Button>
                 </Flex>
             </Flex>
+            
         </>
     )
 }
