@@ -71,7 +71,7 @@ export function Landing() {
 
     return (
         <>
-            <Heading>Hey There👋, Welcome to TopTraits </Heading>
+            <Heading>Hey There👋, Welcome to MostLikely </Heading>
             <Text fontSize={"x-small"} > If the Lobby doesn't start instatly please hold for a minute because the backend shuts down during inactivity.</Text>
             <Flex
                 flexDirection={{ base: "column", md: "row" }}

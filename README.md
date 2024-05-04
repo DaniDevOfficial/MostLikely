@@ -1,30 +1,39 @@
-# React + TypeScript + Vite
+# WhoIsTheMostLikely
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+WhoIsTheMostLikely is a simple multiplayer game with socket io connection. Its a party game where the players can vote on who is the most likely to do a certain thing.
 
-Currently, two official plugins are available:
+## Installation
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+For the frontend you simply need to install all the dependecies like this: 
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
+```bash
+npm install
+```
+And after that you need to fill in the .env file with the correct backend url:
 
 ```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+VITE_BACKEND_URL= "YOUR_BACKEND_URL_HERE"
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+## How can I play?
+
+### Lobby
+
+Firstly you need to create a lobby and invite your firends by either sending them the URL or the code to the lobby. The Host of the lobby is simply always the player who joined the first. This player can change the lobby settings and progress the Game itself. 
+
+### Phase 1: Question writing
+
+When the game starts each player has to write a set amount of questions, which are answerable with a name of a player or some random person. For this you have a time limit
+
+### Phase 2.1: Voting
+
+After all the players have finished writing their questionst the voting phase starts. There will be a random question dispalyed and you need to write down the name of the person, who is the most likely to do that thing. After all the players have voted for this questions, there will be a scoreboard for which name has recived the most votes. This goes on until there are no more questions Available.
+
+### Phase 3: End
+
+When all the questions have been voted on there will be an end screen with all the score board again displayed in a overview. Now the lobby host can either start a new game or you can leave the lobby.
+
+
+## License
+
+You are allowed to change it etc, but you need to give @DaniDevOfficial visible Credit, with a link to the original. 
