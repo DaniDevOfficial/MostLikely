@@ -41,7 +41,6 @@ export function Lobby({ roomInformation }: Props) {
             setSettings(roomInformation.game.settings);
         }
         if (roomInformation && roomInformation.players) {
-            console.log(socket.id)
             setThisPlayer(roomInformation.players.find((player) => player.playerId === socket.id));
         }
     }, [roomInformation]);
@@ -54,8 +53,6 @@ export function Lobby({ roomInformation }: Props) {
     function changeSingleSetting(setting: string, value: number) {
         const newSettings = settings;
         newSettings[setting] = value;
-        console.log(newSettings)
-        console.log(params.id)
         socket.emit("settings update", { newSettings: newSettings, roomId: params.id });
     }
 
@@ -76,8 +73,6 @@ export function Lobby({ roomInformation }: Props) {
             playerId: playerId
         }
         socket.emit("kick player", kickData);
-        console.log(`Player ${kickedPlayer.name} got kicked!`);
-        console.log(kickedPlayer)
     }
 
 
@@ -115,7 +110,6 @@ export function Lobby({ roomInformation }: Props) {
                 mt={10}
             >
                 <Box>
-                    {/*TODO: idk but there is a problem with the popover part i think */}
                     <Box
                         w={{ base: "100%", md: "450px" }}
                         bg={useColorModeValue("gray.100", "gray.700")}

@@ -17,7 +17,7 @@ VITE_BACKEND_URL= "YOUR_BACKEND_URL_HERE"
 
 ## How can I play?
 
-### Lobby
+### Phase 0: Lobby
 
 Firstly you need to create a lobby and invite your firends by either sending them the URL or the code to the lobby. The Host of the lobby is simply always the player who joined the first. This player can change the lobby settings and progress the Game itself. 
 

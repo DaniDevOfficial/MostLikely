@@ -68,7 +68,6 @@ export function Game() {
         }
     }, [roomInformation]);
     useEffect(() => {
-        console.log(params.id)
         socket.emit("check if room exists", roomId);
         socket.emit("join", roomId)
 
@@ -89,7 +88,6 @@ export function Game() {
         });
 
         socket.on("joined", ({ room, users: usersInRoom }) => {
-            console.log(usersInRoom)
             setConnectedUsers(usersInRoom);
         });
 
@@ -101,7 +99,6 @@ export function Game() {
             };
         });
         socket.on("room information updated", (roomInformation) => {
-            console.log(roomInformation);
             roomInformation.players[0].role = "host";
 
             setRoomInformation(roomInformation);
@@ -125,9 +122,7 @@ export function Game() {
         });
 
         socket.on("restart warning", (timeUntilRestart) => {
-            console.log(timeUntilRestart)
             const minutesUntilRestart = Math.floor(timeUntilRestart.timeUntilRestart / 60 / 1000);
-            console.log(minutesUntilRestart)
             toast({
                 title: "Server Restart",
                 description: `The server will restart in about ${minutesUntilRestart} minutes. Please finish your game.`,

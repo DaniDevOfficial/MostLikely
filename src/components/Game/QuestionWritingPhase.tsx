@@ -17,7 +17,8 @@ interface Props {
 export function QuestionWritingPhase({ roomInformation, userState, setUserState }: Props) {
     const [timeLeft, setTimeLeft] = useState(roomInformation.game?.settings.QuestionWriteTime || 0);
     const amountOfQuestions = roomInformation.game?.settings.AmountOfQuestionsPerPlayer;
-    const [questions, setQuestions] = useState<Question[]>([]);
+    const initialQuestions = Array.from({ length: amountOfQuestions }, () => ({ question: '' }));
+    const [questions, setQuestions] = useState<Question[]>(initialQuestions);
     const [questionsWithAuthor, setQuestionsWithAuthor] = useState<Question[]>([]);
     const amoutOfPlayers = roomInformation.players.length || 0;
     const amountFinishedWriting = (roomInformation.finishedWritingQuestions && roomInformation.finishedWritingQuestions.length) || 0;
@@ -98,7 +99,6 @@ export function QuestionWritingPhase({ roomInformation, userState, setUserState 
     }
     function finishedWritingQuestions() {
         const removedEmptyQuestions = questions.filter(question => question.question !== "");
-        console.log(removedEmptyQuestions)
         const isFull = removedEmptyQuestions.length == amountOfQuestions;
         if (isFull) {
             setUserState("questionWriteDone");
@@ -113,7 +113,6 @@ export function QuestionWritingPhase({ roomInformation, userState, setUserState 
         setQuestionsWithAuthor(questionsWithAuthorTmp);
 
         socket.on("finish writing questions", () => {
-            console.log("questions With Author", questionsWithAuthorTmp);
             socket.emit("player finished writing", { questions: questionsWithAuthorTmp, roomId: roomInformation.roomId });
         });
 

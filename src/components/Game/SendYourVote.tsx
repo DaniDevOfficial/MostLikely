@@ -9,7 +9,7 @@ export function SendYourVote({ roomInformation, userState, setUserState }) {
 
     const [selectedPlayer, setSelectedPlayer] = useState("");
     const currentQuestion = roomInformation.questions.find(question => question.id === roomInformation.voting[0]);
-    const [timeLeft, setTimeLeft] = useState(roomInformation.game?.settings.QuestionWriteTime || 0);
+    const [timeLeft, setTimeLeft] = useState(roomInformation.game?.settings.VoteTime || 0);
     const amountOfPlayers = roomInformation.players.length || 0;
     const amountFinishedWriting = (currentQuestion.votes && currentQuestion.votes.length) || 0;
     const allPlayers = roomInformation.players;
@@ -32,13 +32,8 @@ export function SendYourVote({ roomInformation, userState, setUserState }) {
 
     useEffect(() => {
         socket.on("finish voting", (forWhichQuestion) => {
-            console.log(currentQuestion);
-            console.log("tmpRoomInfo", forWhichQuestion);
-            const currentQuestionId = currentQuestion.id;
-            console.log("currentQuestionId", currentQuestionId)
             if (forWhichQuestion !== currentQuestion.id) return console.log("This is the wrong question");
             if (currentQuestion.votes && currentQuestion.votes.some(vote => vote.fromWhoId === socket.id)) {
-                console.log(`You have already voted for this question.`);
                 return;
             }
             console.log(`Voted for ${selectedPlayer} in question ${currentQuestion.id}`);

@@ -7,7 +7,6 @@ export function PlayerVoteForm({ allPlayers, handlePlayerSelect }) {
 
     const handleInputChange = (event) => {
         const inputText = event.target.value;
-        console.log(inputText)
         setSearchText(inputText);
 
         // Filter suggestions based on input text
